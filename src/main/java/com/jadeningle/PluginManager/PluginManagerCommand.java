@@ -2,6 +2,7 @@ package com.jadeningle.PluginManager;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -136,7 +137,19 @@ public class PluginManagerCommand implements CommandExecutor {
 			return true;
 		}
 		
-		final File toLoad = new File( "plugins" + File.separator + split[1] + ( split[1].endsWith( ".jar" ) ? "" : ".jar" ) );
+		File toLoad = new File( "plugins" + File.separator + split[1] + ( split[1].endsWith( ".jar" ) ? "" : ".jar" ) );
+		if (!toLoad.exists()) {
+		    toLoad = new File( "plugins" + File.separator + split[1] + (split[1].endsWith( ".jar.unloaded" ) ? "" : ".jar.unloaded" ) );
+		    if (toLoad.exists()) {
+		        String newPath = split[1].substring(0, split[1].endsWith(".jar.unloaded") ? (split[1].length() - ".jar.unloaded".length()) : split[1].length()) + ".jar";
+		        File newFile = new File(toLoad.getParentFile(), newPath);
+		        toLoad.renameTo(newFile);
+		        toLoad = newFile;
+		    } else {
+		        sender.sendMessage("I didn't do my homework!");
+		    }
+		}
+		
 		
 		if( !toLoad.exists( ) )
 		{
